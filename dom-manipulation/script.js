@@ -83,27 +83,25 @@ function filterQuotes() {
 
 /**
  * Populates the category filter dropdown with unique categories from the quotes array.
+ * Uses the map method to extract categories.
  */
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
-  // Start with an array that always includes "all".
-  const categories = new Set();
-
-  quotes.forEach(quote => {
-    if (quote.category) {
-      // Use lower case for consistency.
-      categories.add(quote.category.toLowerCase());
-    }
-  });
   
-  // Clear existing options except "All Categories"
+  // Use map to extract all categories from the quotes array (in lower case for consistency)
+  const allCategories = quotes.map(quote => quote.category.toLowerCase());
+  
+  // Create a unique list of categories using a Set
+  const uniqueCategories = [...new Set(allCategories)];
+  
+  // Clear existing options and add the default "All Categories" option
   select.innerHTML = `<option value="all">All Categories</option>`;
   
-  // Append new options from the set of unique categories.
-  categories.forEach(cat => {
+  // Append new options from the unique categories
+  uniqueCategories.forEach(cat => {
     const option = document.createElement("option");
     option.value = cat;
-    // Capitalize the first letter for display purposes.
+    // Capitalize the first letter for display
     option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
     select.appendChild(option);
   });
@@ -176,7 +174,7 @@ function addQuote() {
   quotes.push(newQuote);
   saveQuotes();
   
-  // Re-populate the category dropdown if new category added.
+  // Re-populate the category dropdown if a new category is introduced.
   populateCategories();
 
   document.getElementById("addQuoteForm").reset();
@@ -185,7 +183,7 @@ function addQuote() {
 }
 
 // -----------------------------
-// JSON Import and Export Functions (if needed)
+// JSON Import and Export Functions
 // -----------------------------
 
 function exportToJsonFile() {
@@ -244,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("newQuote").addEventListener("click", showRandomQuote);
   createAddQuoteForm();
 
-  // Export and Import event listeners (if using JSON functionality)
+  // Export and Import event listeners
   document.getElementById("exportJson").addEventListener("click", exportToJsonFile);
   document.getElementById("importFile").addEventListener("change", importFromJsonFile);
 });
