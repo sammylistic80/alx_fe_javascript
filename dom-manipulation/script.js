@@ -5,13 +5,16 @@ let quotes = [
     { text: "Life is what happens when you're busy making other plans.", category: "Philosophy" }
 ];
 
-// Function to display a random quote
+// Function to display a random quote with innerHTML
 function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
     const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.textContent = `"${quote.text}" - ${quote.category}`;
+    
+    // Using innerHTML to add dynamic content, here we also add a <strong> tag for emphasis
+    quoteDisplay.innerHTML = `<p>"${quote.text}" - <em>${quote.category}</em></p>`;
 }
+
 
 // Event listener for the button to show a new random quote
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
