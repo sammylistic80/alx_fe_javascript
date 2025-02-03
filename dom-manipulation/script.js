@@ -171,8 +171,9 @@ function addQuote() {
 
 /**
  * Exports the quotes array as a JSON file.
+ * (Renamed to exportToJsonFile to meet requirements.)
  */
-function exportQuotes() {
+function exportToJsonFile() {
   const dataStr = JSON.stringify(quotes, null, 2); // Pretty print with indentation
   const blob = new Blob([dataStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -237,8 +238,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Create the add quote form dynamically
   createAddQuoteForm();
 
-  // Event listener for export button
-  document.getElementById('exportJson').addEventListener('click', exportQuotes);
+  // Event listener for export button (using the updated function name)
+  document.getElementById('exportJson').addEventListener('click', exportToJsonFile);
 
   // Event listener for import file input
   document.getElementById('importFile').addEventListener('change', importFromJsonFile);
