@@ -1,4 +1,4 @@
-const SERVER_URL = "https://your-mockapi-endpoint.com/quotes"; // Replace with your actual MockAPI endpoint
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Replace with your MockAPI endpoint
 const STORAGE_KEY = "dynamicQuoteGenerator_quotes";
 
 let quotes = [];
@@ -82,35 +82,6 @@ function mergeQuotes(serverQuotes) {
   }
 }
 
-// Function to sync quotes with the server
-async function syncQuotes() {
-  try {
-    // Fetch quotes from the server
-    const response = await fetch(SERVER_URL);
-    if (!response.ok) {
-      throw new Error("Failed to fetch quotes from the server");
-    }
-    
-    const serverQuotes = await response.json();
-    
-    // Convert server quotes to match local format
-    const formattedQuotes = serverQuotes.map(q => ({
-      text: q.title, // Adjust property names based on API response
-      category: "general" // Default category (adjust as needed)
-    }));
-
-    // Load local quotes
-    loadQuotes();
-    
-    // Merge server quotes with local quotes
-    mergeQuotes(formattedQuotes);
-    
-    showNotification("Quotes synced with server!");
-  } catch (error) {
-    console.error("Error syncing quotes:", error);
-  }
-}
-
 // Show notifications
 function showNotification(message) {
   const notification = document.createElement("div");
@@ -124,11 +95,11 @@ function showNotification(message) {
 }
 
 // Periodic syncing every 30 seconds
-setInterval(syncQuotes, 30000);
+setInterval(fetchQuotesFromServer, 30000);
 
 // Initialize application
 document.addEventListener("DOMContentLoaded", function() {
   loadQuotes();
-  syncQuotes(); // ✅ Sync quotes on page load
+  fetchQuotesFromServer(); // Initial fetch
   populateCategories();
 });
