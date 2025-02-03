@@ -24,7 +24,7 @@ async function fetchQuotesFromServer() {
 }
 
 // Function to sync local storage with server (with POST request)
-async function syncWithServer() {
+async function syncQuotes() {
     const serverQuotes = await fetchQuotesFromServer();
     if (serverQuotes.length === 0) {
         alert("No quotes found from server.");
