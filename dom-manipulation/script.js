@@ -1,4 +1,4 @@
-const SERVER_URL = "https://your-mockapi-endpoint.com/quotes"; // Replace with your actual MockAPI endpoint
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Ensure correct API endpoint
 const STORAGE_KEY = "dynamicQuoteGenerator_quotes";
 
 let quotes = [];
@@ -12,6 +12,35 @@ function loadQuotes() {
 // Save quotes to local storage
 function saveQuotes() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
+}
+
+// Function to sync quotes with the server
+async function syncQuotes() {
+  try {
+    // Fetch quotes from the server
+    const response = await fetch(SERVER_URL);
+    if (!response.ok) {
+      throw new Error("Failed to fetch quotes from the server");
+    }
+    
+    const serverQuotes = await response.json();
+    
+    // Convert server quotes to match local format
+    const formattedQuotes = serverQuotes.map(q => ({
+      text: q.title, // Adjust property names based on API response
+      category: "general" // Default category (adjust as needed)
+    }));
+
+    // Load local quotes
+    loadQuotes();
+    
+    // Merge server quotes with local quotes
+    mergeQuotes(formattedQuotes);
+    
+    showNotification("Quotes successfully synced!");
+  } catch (error) {
+    console.error("Error syncing quotes:", error);
+  }
 }
 
 // Function to add new quote and sync to server
@@ -50,27 +79,9 @@ async function addQuote() {
   }
 }
 
-// Function to fetch quotes from server
-async function fetchQuotesFromServer() {
-  try {
-    const response = await fetch(SERVER_URL);
-    const serverQuotes = await response.json();
-
-    const formattedQuotes = serverQuotes.map(q => ({
-      text: q.title,
-      category: "general"
-    }));
-
-    mergeQuotes(formattedQuotes);
-  } catch (error) {
-    console.error("Error fetching quotes from server:", error);
-  }
-}
-
 // Function to merge server quotes with local storage
 function mergeQuotes(serverQuotes) {
   loadQuotes();
-
   const localQuoteTexts = new Set(quotes.map(q => q.text));
   let newQuotes = serverQuotes.filter(q => !localQuoteTexts.has(q.text));
 
@@ -79,35 +90,6 @@ function mergeQuotes(serverQuotes) {
     saveQuotes();
     showNotification(`${newQuotes.length} new quotes added from server.`);
     populateCategories();
-  }
-}
-
-// Function to sync quotes with the server
-async function syncQuotes() {
-  try {
-    // Fetch quotes from the server
-    const response = await fetch(SERVER_URL);
-    if (!response.ok) {
-      throw new Error("Failed to fetch quotes from the server");
-    }
-    
-    const serverQuotes = await response.json();
-    
-    // Convert server quotes to match local format
-    const formattedQuotes = serverQuotes.map(q => ({
-      text: q.title, // Adjust property names based on API response
-      category: "general" // Default category (adjust as needed)
-    }));
-
-    // Load local quotes
-    loadQuotes();
-    
-    // Merge server quotes with local quotes
-    mergeQuotes(formattedQuotes);
-    
-    showNotification("Quotes synced with server!");
-  } catch (error) {
-    console.error("Error syncing quotes:", error);
   }
 }
 
@@ -129,6 +111,6 @@ setInterval(syncQuotes, 30000);
 // Initialize application
 document.addEventListener("DOMContentLoaded", function() {
   loadQuotes();
-  syncQuotes(); // ✅ Sync quotes on page load
+  syncQuotes(); // Initial sync on page load
   populateCategories();
 });
