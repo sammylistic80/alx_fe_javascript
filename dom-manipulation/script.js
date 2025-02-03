@@ -42,14 +42,13 @@ function loadLastSelectedFilter() {
 // -----------------------------
 
 /**
- * Shows a random quote that matches the currently selected category filter.
+ * Shows a random quote that matches the passed selectedCategory.
  */
-function showRandomQuote() {
-  const filter = document.getElementById("categoryFilter").value;
+function showRandomQuoteWithFilter(selectedCategory) {
   let filteredQuotes = quotes;
 
-  if (filter !== "all") {
-    filteredQuotes = quotes.filter(q => q.category.toLowerCase() === filter.toLowerCase());
+  if (selectedCategory !== "all") {
+    filteredQuotes = quotes.filter(q => q.category.toLowerCase() === selectedCategory.toLowerCase());
   }
 
   if (filteredQuotes.length === 0) {
@@ -68,13 +67,12 @@ function showRandomQuote() {
 
 /**
  * Called when the user changes the category filter.
+ * It explicitly uses the variable 'selectedCategory'.
  */
 function filterQuotes() {
-  const selectedFilter = document.getElementById("categoryFilter").value;
-  // Save the last selected filter in local storage.
-  saveLastSelectedFilter(selectedFilter);
-  // Show a random quote that matches the filter.
-  showRandomQuote();
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  saveLastSelectedFilter(selectedCategory);
+  showRandomQuoteWithFilter(selectedCategory);
 }
 
 // -----------------------------
@@ -178,8 +176,9 @@ function addQuote() {
   populateCategories();
 
   document.getElementById("addQuoteForm").reset();
-  // Display a random quote that respects the current filter.
-  showRandomQuote();
+  // After adding, reapply the current filter.
+  const currentSelectedCategory = document.getElementById("categoryFilter").value;
+  showRandomQuoteWithFilter(currentSelectedCategory);
 }
 
 // -----------------------------
@@ -214,7 +213,9 @@ function importFromJsonFile(event) {
         // Update the category filter after importing new quotes.
         populateCategories();
         alert("Quotes imported successfully!");
-        showRandomQuote();
+        // Reapply the current filter
+        const currentSelectedCategory = document.getElementById("categoryFilter").value;
+        showRandomQuoteWithFilter(currentSelectedCategory);
       } else {
         alert("Invalid file format: JSON data must be an array of quotes.");
       }
@@ -237,9 +238,13 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("categoryFilter").value = loadLastSelectedFilter();
   
   // Show a random quote using the current filter.
-  showRandomQuote();
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  showRandomQuoteWithFilter(selectedCategory);
 
-  document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+  document.getElementById("newQuote").addEventListener("click", function() {
+    const selectedCategory = document.getElementById("categoryFilter").value;
+    showRandomQuoteWithFilter(selectedCategory);
+  });
   createAddQuoteForm();
 
   // Export and Import event listeners
