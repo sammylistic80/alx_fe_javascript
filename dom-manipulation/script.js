@@ -5,19 +5,57 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "Life is what happens when you're busy making other plans.", category: "Philosophy" }
 ];
 
-// Function to display a random quote
-function showRandomQuote() {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const quote = quotes[randomIndex];
-    const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = `<p>"${quote.text}" - <em>${quote.category}</em></p>`;
+// Get the category filter dropdown element
+const categoryFilter = document.getElementById('categoryFilter');
 
-    // Store the last viewed quote in sessionStorage
-    sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote));
+// Function to display quotes based on selected filter
+function displayQuotes(filteredQuotes) {
+    const quoteDisplay = document.getElementById('quoteDisplay');
+    quoteDisplay.innerHTML = '';
+
+    if (filteredQuotes.length === 0) {
+        quoteDisplay.innerHTML = '<p>No quotes found for this category.</p>';
+    } else {
+        filteredQuotes.forEach(quote => {
+            quoteDisplay.innerHTML += `<p>"${quote.text}" - <em>${quote.category}</em></p>`;
+        });
+    }
 }
 
-// Event listener for the button to show a new random quote
-document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+// Function to filter quotes based on the selected category
+function filterQuotes() {
+    const selectedCategory = categoryFilter.value;
+    // Store the selected category in localStorage
+    localStorage.setItem('selectedCategory', selectedCategory);
+
+    let filteredQuotes = quotes;
+    if (selectedCategory !== 'all') {
+        filteredQuotes = quotes.filter(quote => quote.category === selectedCategory);
+    }
+    displayQuotes(filteredQuotes);
+}
+
+// Function to populate the categories dropdown dynamically
+function populateCategories() {
+    // Get all unique categories from the quotes array
+    const categories = [...new Set(quotes.map(quote => quote.category))];
+
+    // Clear existing options in the dropdown and add the "All Categories" option
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
+    // Add options for each category
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+
+    // Restore the last selected category from localStorage (if any)
+    const savedCategory = localStorage.getItem('selectedCategory') || 'all';
+    categoryFilter.value = savedCategory;
+    filterQuotes(); // Apply the selected filter
+}
 
 // Function to add a new quote
 function addQuote() {
@@ -27,7 +65,8 @@ function addQuote() {
     if (newQuoteText && newQuoteCategory) {
         const newQuote = { text: newQuoteText, category: newQuoteCategory };
         quotes.push(newQuote);
-        saveQuotes(); // Save quotes to localStorage
+        saveQuotes(); // Save the new quotes array to localStorage
+        populateCategories(); // Update the categories dropdown
         alert('Quote added successfully!');
         
         // Clear the input fields after adding the quote
@@ -63,13 +102,11 @@ function importFromJsonFile(event) {
         const importedQuotes = JSON.parse(event.target.result);
         quotes.push(...importedQuotes);
         saveQuotes(); // Save the new quotes to localStorage
+        populateCategories(); // Update the categories dropdown
         alert('Quotes imported successfully!');
     };
     fileReader.readAsText(event.target.files[0]);
 }
 
-// Call the function to display the last viewed quote from sessionStorage when the page loads
-const lastViewedQuote = JSON.parse(sessionStorage.getItem('lastViewedQuote'));
-if (lastViewedQuote) {
-    document.getElementById('quoteDisplay').innerHTML = `<p>"${lastViewedQuote.text}" - <em>${lastViewedQuote.category}</em></p>`;
-}
+// Call the function to populate the categories dropdown when the page loads
+populateCategories();

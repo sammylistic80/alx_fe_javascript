@@ -26,11 +26,23 @@
       font-size: 1.2em;
       margin-top: 20px;
     }
+    select {
+      padding: 8px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
   <h1>Dynamic Quote Generator</h1>
+
+  <!-- Category filter dropdown -->
+  <label for="categoryFilter">Filter by Category: </label>
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
+    <!-- Dynamically populated categories -->
+  </select>
+  
   <div id="quoteDisplay"></div>
   
   <button id="newQuote">Show New Quote</button>
