@@ -23,7 +23,7 @@ async function fetchQuotesFromServer() {
     }
 }
 
-// Function to sync local storage with server
+// Function to sync local storage with server (with POST request)
 async function syncWithServer() {
     const serverQuotes = await fetchQuotesFromServer();
     if (serverQuotes.length === 0) {
@@ -41,7 +41,27 @@ async function syncWithServer() {
     quotes = updatedQuotes;
     populateCategories();
     alert('Quotes synced with server!');
+
+    // Simulate sending the updated quotes to the server (POST request with necessary headers)
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST', // Define method as POST
+            headers: {
+                'Content-Type': 'application/json' // Set content type to JSON
+            },
+            body: JSON.stringify(updatedQuotes) // Send the updated quotes as the request body
+        });
+
+        if (response.ok) {
+            console.log('Quotes successfully synced to the server!');
+        } else {
+            console.error('Failed to sync quotes to the server.');
+        }
+    } catch (error) {
+        console.error('Error syncing quotes with the server:', error);
+    }
 }
+
 
 // Periodically check for new quotes from the server every 10 seconds
 setInterval(syncWithServer, 10000);
