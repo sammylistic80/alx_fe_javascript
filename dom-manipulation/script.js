@@ -1,4 +1,4 @@
-const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Replace with your MockAPI endpoint
+const SERVER_URL = "https://your-mockapi-endpoint.com/quotes"; // Replace with your actual MockAPI endpoint
 const STORAGE_KEY = "dynamicQuoteGenerator_quotes";
 
 let quotes = [];
@@ -105,7 +105,7 @@ async function syncQuotes() {
     // Merge server quotes with local quotes
     mergeQuotes(formattedQuotes);
     
-    showNotification("Quotes successfully synced!");
+    showNotification("Quotes synced with server!");
   } catch (error) {
     console.error("Error syncing quotes:", error);
   }
