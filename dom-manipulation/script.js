@@ -16,9 +16,12 @@ function displayQuotes(filteredQuotes) {
     if (filteredQuotes.length === 0) {
         quoteDisplay.innerHTML = '<p>No quotes found for this category.</p>';
     } else {
-        filteredQuotes.forEach(quote => {
-            quoteDisplay.innerHTML += `<p>"${quote.text}" - <em>${quote.category}</em></p>`;
-        });
+        // Display a random quote from the filtered list if available
+        const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+        const randomQuote = filteredQuotes[randomIndex];
+
+        // Show the selected random quote
+        quoteDisplay.innerHTML = `<p>"${randomQuote.text}" - <em>${randomQuote.category}</em></p>`;
     }
 }
 
